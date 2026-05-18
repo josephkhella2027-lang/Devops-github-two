@@ -16,26 +16,35 @@ jobs:
         image: postgres:16
 
         env:
-          POSTGRES_USER: admin
-          POSTGRES_PASSWORD: 0000
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: userdb
 
         ports:
-          - 5433:5432
+          - 5432:5432
 
         options: >-
-          --health-cmd="pg_isready -U admin"
+          --health-cmd="pg_isready -U postgres"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     env:
-      DATABASE_URL: postgresql://admin:0000@localhost:5433/userdb
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/userdb
 
     steps:
-      - uses: actions/checkout@v4
+      # =========================
+      # CHECKOUT
+      # =========================
 
-      - name: Setup Node
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # =========================
+      # NODE SETUP
+      # =========================
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -67,6 +76,9 @@ jobs:
       - name: Generate Prisma Client
         working-directory: backend
         run: npx prisma generate
+
+      - name: Wait for PostgreSQL
+        run: sleep 10
 
       - name: Run Prisma Migrations
         working-directory: backend
