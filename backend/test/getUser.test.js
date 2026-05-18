@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import request from "supertest";
 import app from "../server.js";
 
@@ -23,7 +26,7 @@ describe("Users API", () => {
   test("GET users contains Emby does NOT apply here", async () => {
     const res = await request(app).get("/api/users");
 
-    const hasUser = res.body.users.some((user) => user.username === "ali01");
+    const hasUser = res.body.users.some((user) => user.username === "jesus");
 
     expect(hasUser).toBe(true);
   });
