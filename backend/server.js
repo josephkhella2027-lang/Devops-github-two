@@ -12,8 +12,8 @@ const Port = process.env.PORT || 5450;
 app.use("/api", getUsers);
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  app.listen(Port, () => {
+    console.log(`Server running at http://localhost:${Port}`);
   });
 }
 
