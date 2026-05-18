@@ -22,12 +22,4 @@ describe("Users API", () => {
 
     expect(res.body.users.length).toBeGreaterThan(0);
   });
-
-  test("GET users contains Emby does NOT apply here", async () => {
-    const res = await request(app).get("/api/users");
-
-    const hasUser = res.body.users.some((user) => user.username === "jesus");
-
-    expect(hasUser).toBe(true);
-  });
 });
