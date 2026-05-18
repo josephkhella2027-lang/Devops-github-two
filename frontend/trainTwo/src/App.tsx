@@ -1,11 +1,12 @@
 import "./App.css";
 
 function App() {
-  const hiWorld = "hellow";
+  const name = "Jesus Christ";
   return (
     <>
       <h1> hellow world </h1>
-      {hiWorld}
+      <h1> Hej san Hur ar det</h1>
+      <h1>Hi {name} </h1>
     </>
   );
 }
