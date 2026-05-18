@@ -11,6 +11,10 @@ const Port = process.env.PORT || 5450;
 
 app.use("/api", getUsers);
 
-app.listen(Port, () => {
-  console.log(` server is running http://localhost:${Port}/`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+export default app;
