@@ -1,0 +1,108 @@
+import js from "@eslint/js";
+import globals from "globals";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
+
+export default defineConfig([
+  globalIgnores(["dist"]),
+
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+
+  {
+    files: ["**/*.{ts,tsx,js,jsx}"],
+
+    languageOptions: {
+      globals: globals.browser,
+    },
+
+    plugins: {
+      react,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
+
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+
+    rules: {
+      /* =========================
+         UNUSED VARIABLES
+      ========================= */
+
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+
+      "no-unused-vars": "off",
+
+      /* =========================
+         REACT
+      ========================= */
+
+      "react/jsx-pascal-case": ["error", { allowAllCaps: false }],
+
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+
+      /* =========================
+         NAMING RULES
+      ========================= */
+
+      "@typescript-eslint/naming-convention": [
+        "error",
+
+        // variables → camelCase
+        {
+          selector: "variable",
+          format: ["camelCase"],
+          leadingUnderscore: "allow",
+        },
+
+        // functions → camelCase (FIXED)
+        {
+          selector: "function",
+          format: ["PascalCase"],
+        },
+
+        // parameters → camelCase
+        {
+          selector: "parameter",
+          format: ["camelCase"],
+        },
+
+        // classes → PascalCase
+        {
+          selector: "class",
+          format: ["PascalCase"],
+        },
+
+        // types/interfaces → PascalCase
+        {
+          selector: "typeLike",
+          format: ["PascalCase"],
+        },
+      ],
+
+      /* =========================
+         VITE REACT REFRESH
+      ========================= */
+
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
+      ],
+    },
+  },
+]);

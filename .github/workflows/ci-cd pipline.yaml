@@ -1,0 +1,58 @@
+name: Full Stack CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # =========================
+      # ---------------- FRONTEND ----------------
+      # =========================
+
+      - name: Install frontend dependencies
+        working-directory: frontend/trainTwo
+        run: npm ci
+
+      - name: Build frontend React app
+        working-directory: frontend/trainTwo
+        run: npm run build
+
+      - name: run lint for frontend
+        working-directory: frontend/trainTwo
+        run: npm run lint
+
+      # =========================
+      # ---------------- BACKEND ----------------
+      # === ======================
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run backend tests (optional)
+        working-directory: backend
+        run: npm test
+
+      - name: build  backend
+        working-directory: backend
+        run: npm run build
+      # =========================
+      # FINAL STEP
+      # =========================
+
+      - name: Show repository files
+        run: ls -R
+
+      - name: CI Completed
+        run: echo "CI Pipeline completed successfully!"
