@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import getUsers from "./routes/getUser.js";
 import registerUser from "./routes/registerUser.js";
+import loginUser from "./routes/loginUser.js";
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ const Port = process.env.PORT || 5450;
 
 app.use("/api", getUsers);
 app.use("/api", registerUser);
+app.use("/api", loginUser);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(Port, () => {
