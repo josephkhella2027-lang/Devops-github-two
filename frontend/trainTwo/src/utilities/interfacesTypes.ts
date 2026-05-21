@@ -12,9 +12,15 @@ export interface RegisterInputType {
   password: string;
   rePassword: string;
 }
+export interface LoginInputType {
+  username: string;
+  password: string;
+}
 
 export interface InitialStateUsersType {
   users: Users[];
+  user: Users | null;
+  token: string | null;
 }
 
 export interface InitialStateLoadingType {
