@@ -1,10 +1,16 @@
 import axios, { type Method } from "axios";
 
-interface Users {
+export interface Users {
   id?: number | string;
   username: string;
   email: string;
   password: string;
+}
+export interface RegisterInputType {
+  username: string;
+  email: string;
+  password: string;
+  rePassword: string;
 }
 
 export interface InitialStateUsersType {
@@ -14,6 +20,7 @@ export interface InitialStateUsersType {
 export interface InitialStateLoadingType {
   loading: boolean;
   error: null | string;
+  successMessage: string | null;
 }
 
 export async function ApiHeader<T>(

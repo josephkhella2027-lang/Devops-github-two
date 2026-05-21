@@ -15,7 +15,9 @@ router.post("/register-user", async (req, res) => {
     const username = cleanString(req.body.username, true);
     const email = cleanString(req.body.email, true);
     const password = req.body.password?.trim();
-    const fields = { username, email, password };
+    const rePassword = req.body.rePassword?.trim();
+
+    const fields = { username, email, password, rePassword };
 
     // if  one of field is empty
 
@@ -36,6 +38,11 @@ router.post("/register-user", async (req, res) => {
     if (existUser) {
       return res.status(500).json({
         message: "User is already exist Please Login",
+      });
+    }
+    if (password != rePassword) {
+      return res.status(500).json({
+        message: "password doesnot matched",
       });
     }
     // hashed password

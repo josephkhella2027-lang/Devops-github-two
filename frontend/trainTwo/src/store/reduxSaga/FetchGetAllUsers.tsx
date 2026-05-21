@@ -1,17 +1,18 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { AxiosError } from "axios";
 
-import { setError, setFinishLoading, setLoading } from "../reduxSlices/LoadingAndErrorSlice";
-import { ApiHeader } from "../../utilities/interfacesTypes";
+import {
+  setError,
+  setFinishLoading,
+  setLoading,
+} from "../reduxSlices/LoadingAndErrorSlice";
+
+import { ApiHeader, type Users } from "../../utilities/interfacesTypes";
+
 import { setUsers } from "../reduxSlices/UserSlice";
 
-interface User {
-  id: number;
-  name: string;
-}
-
 interface UsersResponse {
-  users: User[];
+  users: Users[];
 }
 
 function* FetchGetUserSaga() {
@@ -30,9 +31,7 @@ function* FetchGetUserSaga() {
   } catch (error) {
     const err = error as AxiosError;
 
-    yield put(setError(err.message));
-
-    yield put(setLoading());
+    yield put(setError(err.message || "Something went wrong"));
   }
 }
 
