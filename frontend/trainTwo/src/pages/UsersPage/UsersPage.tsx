@@ -13,7 +13,9 @@ export default function UsersPage() {
     dispatch({ type: "FETCH-USERS" });
   }, [dispatch]);
 
-  function FormedPassword(pass: string) {
+  function FormedPassword(pass?: string) {
+    if (!pass) return "****";
+
     console.log(pass);
     const newPass = pass.slice(10, 13);
     return `****${newPass}****`;
@@ -57,14 +59,14 @@ export default function UsersPage() {
                     background: "yellow",
                   }}
                 >
-                  {FormedPassword(u.password)}
+                  {FormedPassword(u?.password)}
                 </td>
                 <td>
                   <button>Edit</button>
                   <p
                     role="button"
                     tabIndex={0}
-                    onClick={() => handleClick(u.id)}
+                    onClick={() => handleClick(u?.id)}
                     onMouseEnter={(e) => e.currentTarget.focus()}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {

@@ -12,6 +12,7 @@ router.get("/users", async (req, res) => {
         id: true,
         username: true,
         email: true,
+        password: true,
       },
     });
 
