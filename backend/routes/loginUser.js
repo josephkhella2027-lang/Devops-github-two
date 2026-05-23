@@ -2,64 +2,82 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import generateToken from "../middleware/generateToken.js";
+
 const prisma = new PrismaClient();
+
 const router = express.Router();
 
 router.post("/login-user", async (req, res) => {
   try {
     const cleanName = (value, isLower = false) => {
       if (typeof value !== "string") return "";
-      let cleanedName = value.trim().replace(/\s+/g, " ");
+
+      const cleanedName = value.trim().replace(/\s+/g, " ");
+
       return isLower ? cleanedName.toLowerCase() : cleanedName;
     };
+
     const username = cleanName(req.body.username || req.body.email, true);
-    const email = cleanName(req.body.email, true);
-    const password = req.body.password.trim();
-    const fields = {
-      username: username,
-      password,
-    };
 
-    // if field is empty
+    const password = req.body.password?.trim();
 
-    for (const [key, value] of Object.entries(fields)) {
-      if (!value) {
-        return res.status(400).json({
-          message: `${key} field is required`,
-        });
-      }
+    // validation
+    if (!username) {
+      return res.status(400).json({
+        field: "username",
+        message: "Username or email is required",
+      });
     }
 
-    // find exist user
+    if (!password) {
+      return res.status(400).json({
+        field: "password",
+        message: "Password is required",
+      });
+    }
+
+    // find user
     const existUser = await prisma.user.findFirst({
       where: {
-        OR: [{ username: username }, { email: username }],
+        OR: [{ username }, { email: username }],
       },
     });
 
+    // user not found
     if (!existUser) {
-      return res.status(500).json({
-        message: "Username name or Email is not exist",
+      return res.status(404).json({
+        field: "username",
+        message: "Username or email does not exist",
       });
     }
+
     // compare password
     const comparePassword = await bcrypt.compare(password, existUser.password);
+
+    // password incorrect
     if (!comparePassword) {
-      return res.status(500).json({
-        message: "Password is not matched",
+      return res.status(401).json({
+        field: "password",
+        message: "Password is incorrect",
       });
     }
+
+    // generate token
     const token = generateToken(existUser);
+
+    // remove password before sending
+    const { password: _, ...safeUser } = existUser;
 
     return res.status(200).json({
       token,
-      user: existUser,
-      message: "Successfully Logged in",
+      user: safeUser,
+      message: "Successfully logged in",
     });
   } catch (error) {
     return res.status(500).json({
-      error: error.message,
-      message: "Error with GET users request",
+      message: "Error with login request",
+
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

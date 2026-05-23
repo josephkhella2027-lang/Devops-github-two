@@ -7,9 +7,11 @@ import {
   setLoading,
   setSuccessMessage,
   clearMessages,
+  setFinishLoading,
 } from "../reduxSlices/LoadingAndErrorSlice";
 
 import { ApiHeader, type Users } from "../../utilities/interfacesTypes";
+
 import { setLoginUser } from "../reduxSlices/UserSlice";
 
 interface LoginResponse {
@@ -18,11 +20,20 @@ interface LoginResponse {
   message: string;
 }
 
+interface ErrorResponse {
+  message: string;
+  field?: string;
+}
+
 function* FetchLoginUserSaga(action: PayloadAction<Users>) {
   try {
+    // clear old messages
     yield put(clearMessages());
+
+    // start loading
     yield put(setLoading());
 
+    // api request
     const data: LoginResponse = yield call(
       ApiHeader<LoginResponse>,
       "post",
@@ -30,6 +41,7 @@ function* FetchLoginUserSaga(action: PayloadAction<Users>) {
       action.payload,
     );
 
+    // save user + token in redux
     yield put(
       setLoginUser({
         user: data.user,
@@ -37,18 +49,30 @@ function* FetchLoginUserSaga(action: PayloadAction<Users>) {
       }),
     );
 
+    // save localStorage
     localStorage.setItem("user", JSON.stringify(data.user));
+
     localStorage.setItem("token", data.token);
 
+    // success message
     yield put(setSuccessMessage(data.message));
+
+    // finish loading
+    yield put(setFinishLoading());
   } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
+    const err = error as AxiosError<ErrorResponse>;
 
     yield put(
-      setError(
-        err.response?.data?.message || err.message || "Something went wrong",
-      ),
+      setError({
+        message:
+          err.response?.data?.message || err.message || "Something went wrong",
+
+        field: err.response?.data?.field,
+      }),
     );
+
+    // finish loading
+    yield put(setFinishLoading());
   }
 }
 

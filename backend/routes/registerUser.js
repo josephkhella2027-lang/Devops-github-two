@@ -37,12 +37,14 @@ router.post("/register-user", async (req, res) => {
     });
     if (existUser) {
       return res.status(500).json({
-        message: "User is already exist Please Login",
+        field: "username",
+        message: "Username or email already exists",
       });
     }
     if (password != rePassword) {
       return res.status(500).json({
-        message: "password doesnot matched",
+        field: "rePassword",
+        message: "Passwords do not match",
       });
     }
     // hashed password

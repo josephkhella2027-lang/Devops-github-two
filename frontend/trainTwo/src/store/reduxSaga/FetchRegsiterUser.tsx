@@ -7,9 +7,11 @@ import {
   setLoading,
   setSuccessMessage,
   clearMessages,
+  setFinishLoading,
 } from "../reduxSlices/LoadingAndErrorSlice";
 
 import { ApiHeader, type Users } from "../../utilities/interfacesTypes";
+
 import { setRegisterUser } from "../reduxSlices/UserSlice";
 
 interface RegisterResponse {
@@ -17,11 +19,20 @@ interface RegisterResponse {
   message: string;
 }
 
+interface ErrorResponse {
+  message: string;
+  field?: string;
+}
+
 function* FetchRegisterUserSaga(action: PayloadAction<Users>) {
   try {
+    // clear old messages
     yield put(clearMessages());
+
+    // start loading
     yield put(setLoading());
 
+    // api request
     const data: RegisterResponse = yield call(
       ApiHeader<RegisterResponse>,
       "post",
@@ -29,16 +40,27 @@ function* FetchRegisterUserSaga(action: PayloadAction<Users>) {
       action.payload,
     );
 
+    // save user
     yield put(setRegisterUser(data.user));
+
+    // success message
     yield put(setSuccessMessage(data.message));
+
+    // finish loading
+    yield put(setFinishLoading());
   } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
+    const err = error as AxiosError<ErrorResponse>;
 
     yield put(
-      setError(
-        err.response?.data?.message || err.message || "Something went wrong",
-      ),
+      setError({
+        message:
+          err.response?.data?.message || err.message || "Something went wrong",
+
+        field: err.response?.data?.field,
+      }),
     );
+
+    yield put(setFinishLoading());
   }
 }
 

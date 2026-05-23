@@ -27,6 +27,7 @@ export interface InitialStateLoadingType {
   loading: boolean;
   error: null | string;
   successMessage: string | null;
+  field: string | null;
 }
 
 export async function ApiHeader<T>(

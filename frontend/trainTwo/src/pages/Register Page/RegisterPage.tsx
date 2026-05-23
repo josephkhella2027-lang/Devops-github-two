@@ -11,12 +11,29 @@ export default function RegisterPage() {
     password: "",
     rePassword: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const dispatch = useDispatch();
   const { error, successMessage } = useSelector(
     (state: RootState) => state.loadingSlice,
   );
   console.log(error);
   /* functions */
+  const validation = () => {
+    const errors: Record<string, string> = {};
+
+    if (!userInfo.username) errors.username = "Username is required";
+    if (!userInfo.email) errors.email = "Email is required";
+    if (!userInfo.password) errors.password = "Password is required";
+    if (!userInfo.rePassword) errors.rePassword = "Repeat password is required";
+
+    if (userInfo.password !== userInfo.rePassword) {
+      errors.rePassword = "Passwords do not match";
+    }
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
+  };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     val: string,
@@ -30,6 +47,7 @@ export default function RegisterPage() {
   //handle submit
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    validation();
     dispatch({
       type: "FETCH-REGISTER-USER",
       payload: userInfo,
@@ -59,6 +77,11 @@ export default function RegisterPage() {
                     value={userInfo[inp.name as keyof RegisterInputType]}
                     onChange={(e) => {
                       handleChange(e, inp.name);
+                    }}
+                    style={{
+                      border: fieldErrors[inp.name]
+                        ? "2px solid red"
+                        : "1px solid #ccc",
                     }}
                   />
                 </label>

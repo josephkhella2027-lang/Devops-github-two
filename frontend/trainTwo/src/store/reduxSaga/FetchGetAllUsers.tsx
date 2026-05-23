@@ -15,6 +15,11 @@ interface UsersResponse {
   users: Users[];
 }
 
+interface ErrorResponse {
+  message: string;
+  field?: string;
+}
+
 function* FetchGetUserSaga() {
   try {
     yield put(setLoading());
@@ -29,9 +34,18 @@ function* FetchGetUserSaga() {
 
     yield put(setFinishLoading());
   } catch (error) {
-    const err = error as AxiosError;
+    const err = error as AxiosError<ErrorResponse>;
 
-    yield put(setError(err.message || "Something went wrong"));
+    yield put(
+      setError({
+        message:
+          err.response?.data?.message || err.message || "Something went wrong",
+
+        field: err.response?.data?.field,
+      }),
+    );
+
+    yield put(setFinishLoading());
   }
 }
 
