@@ -7,7 +7,7 @@ const authMiddleware = (req, res, next) => {
     // check token exists
     if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "No token provided",
+        message: "Please login ",
       });
     }
 
@@ -18,11 +18,12 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // compare token id with params id
-    if (decoded.id !== Number(req.params.id)) {
+    /*  if (decoded.id !== Number(req.params.id)) {
       return res.status(403).json({
         message: "Access denied",
-      });
+      }); 
     }
+      */
 
     // save user info
     req.user = decoded;
