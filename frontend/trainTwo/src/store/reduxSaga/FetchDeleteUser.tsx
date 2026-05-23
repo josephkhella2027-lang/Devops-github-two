@@ -35,11 +35,11 @@ function* FetchDeleteUserSaga(
     yield put(setSuccessMessage(data.message));
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-
     yield put(
-      setError(
-        err.response?.data?.message || err.message || "Something went wrong",
-      ),
+      setError({
+        message:
+          err.response?.data?.message || err.message || "Something went wrong",
+      }),
     );
   }
 }
