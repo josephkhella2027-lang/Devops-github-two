@@ -18,11 +18,11 @@ router.get("/users", async (req, res) => {
 
     return res.status(200).json({
       users,
-      message: "Successfully fetched users",
+      message: ["Successfully fetched users"],
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error fetching users",
+      message: ["Error fetching users"],
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }

@@ -20,18 +20,20 @@ const loadingSlice = createSlice({
     setSuccessMessage: (state, action: PayloadAction<string | null>) => {
       state.loading = false;
       state.successMessage = action.payload;
+      state.error = null;
+      state.field = null;
     },
 
     setError: (
       state,
       action: PayloadAction<{
-        message: string;
-        field?: string;
+        message: string[];
+        field: string[] | null;
       }>,
     ) => {
       state.loading = false;
       state.error = action.payload.message;
-      state.field = action.payload.field || null;
+      state.field = action.payload.field ?? null;
     },
 
     setFinishLoading: (state) => {

@@ -12,6 +12,11 @@ import {
 import { ApiHeader, type Users } from "../../utilities/interfacesTypes";
 import { setDeleteUser } from "../reduxSlices/UserSlice";
 
+interface ErrorResponse {
+  message: string[] | null;
+  field?: string[] | null;
+}
+
 function* FetchDeleteUserSaga(
   action: PayloadAction<string | number | undefined>,
 ) {
@@ -34,11 +39,18 @@ function* FetchDeleteUserSaga(
     // optional: remove from store (not needed if backend sends full list)
     yield put(setSuccessMessage(data.message));
   } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
+    const err = error as AxiosError<ErrorResponse>;
+    const errorData = err.response?.data;
+    const message = Array.isArray(errorData?.message)
+      ? errorData.message
+      : errorData?.message
+        ? [errorData.message]
+        : [err.message || "Something went wrong"];
+
     yield put(
       setError({
-        message:
-          err.response?.data?.message || err.message || "Something went wrong",
+        message,
+        field: errorData?.field ?? null,
       }),
     );
   }

@@ -26,7 +26,7 @@ router.put("/update-user/:id", auth, async (req, res) => {
     // if field is empty
     if (!id) {
       return res.status(400).json({
-        message: "User id not defined",
+        message: ["User id not defined"],
       });
     }
 
@@ -39,7 +39,7 @@ router.put("/update-user/:id", auth, async (req, res) => {
 
     if (!findUser) {
       return res.status(404).json({
-        message: "User is not found",
+        message: ["User is not found"],
       });
     }
     // exist user
@@ -51,7 +51,7 @@ router.put("/update-user/:id", auth, async (req, res) => {
     if (existUser) {
       return res.status(400).json({
         message:
-          "username or email is already exist try to login or write another username or password",
+          ["username or email is already exist try to login or write another username or password"],
       });
     }
 
@@ -79,12 +79,12 @@ router.put("/update-user/:id", auth, async (req, res) => {
     return res.status(200).json({
       users,
       user: updatedUser,
-      message: "User Successfully updated",
+      message: ["User Successfully updated"],
     });
   } catch (error) {
     return res.status(500).json({
       error: error.message,
-      message: "Error with update users request",
+      message: ["Error with update users request"],
     });
   }
 });

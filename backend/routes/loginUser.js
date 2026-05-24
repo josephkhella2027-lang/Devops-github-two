@@ -20,6 +20,26 @@ router.post("/login-user", async (req, res) => {
     const username = cleanName(req.body.username || req.body.email, true);
 
     const password = req.body.password?.trim();
+    const fields = { username, password };
+    const emptyFields = Object.entries(fields)
+      .filter(([key, value]) => {
+        return typeof value !== "string" || value.trim() === "";
+      })
+      .map(([key]) => key);
+    if (emptyFields.length > 0) {
+      const allEmpty = emptyFields.length === Object.keys(fields).length;
+
+      return res.status(400).json({
+        field: emptyFields,
+        message: allEmpty
+          ? `Please fill All fields`
+          : emptyFields.map(
+              (f) =>
+                `${f.charAt(0).toUpperCase() + f.slice(1)} field is required`,
+            ),
+      });
+    }
+    /* 
 
     // validation
     if (!username) {
@@ -34,7 +54,7 @@ router.post("/login-user", async (req, res) => {
         field: "password",
         message: "Password is required",
       });
-    }
+    } */
 
     // find user
     const existUser = await prisma.user.findFirst({
