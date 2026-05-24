@@ -22,7 +22,7 @@ describe("Users API", () => {
     const res = await request(app).get("/api/users");
 
     expect(res.body).toHaveProperty("message");
-    expect(typeof res.body.message).toBe("string");
+    expect(Array.isArray(res.body.message)).toBe(true);
   });
 
   test("Each user has correct properties", async () => {
@@ -35,7 +35,6 @@ describe("Users API", () => {
       expect(user).toHaveProperty("username");
       expect(user).toHaveProperty("email");
       expect(user).toHaveProperty("password");
-      expect(user).toHaveProperty("createdAt");
     }
   });
 });

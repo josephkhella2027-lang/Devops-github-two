@@ -13,7 +13,7 @@ router.delete("/delete-user/:id", auth, async (req, res) => {
     // if field is empty
     if (!id) {
       return res.status(400).json({
-        message: "User id not defined",
+        message: ["User id not defined"],
       });
     }
 
@@ -26,7 +26,7 @@ router.delete("/delete-user/:id", auth, async (req, res) => {
 
     if (!findUser) {
       return res.status(404).json({
-        message: "User is not found",
+        message: ["User is not found"],
       });
     }
     const deletedUser = await prisma.user.delete({
@@ -41,12 +41,12 @@ router.delete("/delete-user/:id", auth, async (req, res) => {
     return res.status(200).json({
       users,
       user: deletedUser,
-      message: "User Successfully deleted",
+      message: ["User Successfully deleted"],
     });
   } catch (error) {
     return res.status(500).json({
       error: error.message,
-      message: "Error with GET users request",
+      message: ["Error with GET users request"],
     });
   }
 });

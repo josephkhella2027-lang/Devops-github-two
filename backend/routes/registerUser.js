@@ -19,32 +19,64 @@ router.post("/register-user", async (req, res) => {
 
     const fields = { username, email, password, rePassword };
 
-    // if  one of field is empty
+    // 1. EMPTY FIELD VALIDATION (FIRST STEP)
+    const emptyFields = Object.entries(fields)
+      .filter(([_, value]) => typeof value !== "string" || value.trim() === "")
+      .map(([key]) => key);
 
-    for (const [key, value] of Object.entries(fields)) {
-      if (!value) {
-        return res.status(400).json({
-          message: `${key} field is required`,
-        });
-      }
-    }
-    // if user exist
+    if (emptyFields.length > 0) {
+      const allEmpty = emptyFields.length === Object.keys(fields).length;
 
-    const existUser = await prisma.user.findFirst({
-      where: {
-        OR: [{ username }, { email }],
-      },
-    });
-    if (existUser) {
-      return res.status(500).json({
-        field: "username",
-        message: "Username or email already exists",
+      return res.status(400).json({
+        field: emptyFields,
+        message: allEmpty
+          ? "All fields are required"
+          : emptyFields.map(
+              (f) =>
+                `${f.charAt(0).toUpperCase() + f.slice(1)} field is required`,
+            ),
       });
     }
-    if (password != rePassword) {
-      return res.status(500).json({
+
+    const existUserName = await prisma.user.findFirst({
+      where: {
+        username,
+      },
+    });
+    const existEmail = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    // 3. COLLECT ERRORS
+    const errors = [];
+
+    if (existUserName) {
+      errors.push({
+        field: "username",
+        message: "Username already exists",
+      });
+    }
+
+    if (existEmail) {
+      errors.push({
+        field: "email",
+        message: "Email already exists",
+      });
+    }
+
+    if (password !== rePassword) {
+      errors.push({
         field: "rePassword",
         message: "Passwords do not match",
+      });
+    }
+
+    // 4. RETURN ALL ERRORS
+    if (errors.length > 0) {
+      return res.status(409).json({
+        field: errors.map((e) => e.field),
+        message: errors.map((e) => e.message),
       });
     }
     // hashed password

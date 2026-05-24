@@ -25,9 +25,9 @@ export interface InitialStateUsersType {
 
 export interface InitialStateLoadingType {
   loading: boolean;
-  error: null | string;
+  error: string[] | null;
   successMessage: string | null;
-  field: string | null;
+  field: string[] | null;
 }
 
 export async function ApiHeader<T>(

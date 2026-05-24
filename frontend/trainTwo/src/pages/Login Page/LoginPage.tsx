@@ -10,7 +10,7 @@ export default function LoginPage() {
     password: "",
   });
   const { user, token } = useSelector((state: RootState) => state.userSlice);
-  const { error, successMessage } = useSelector(
+  const { error, successMessage, field } = useSelector(
     (state: RootState) => state.loadingSlice,
   );
 
@@ -30,15 +30,24 @@ export default function LoginPage() {
       payload: userInfo,
     });
   };
-  console.log(user,token);
+  console.log(user, token);
 
   /*  */
   return (
     <div>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        {error && <h2>{error}</h2>}
-        {successMessage && <h2>{successMessage}</h2>}
+        {error &&
+          error.map((err, ind) => {
+            return (
+              <h2 key={ind} style={{ color: "red" }}>
+                {err}
+              </h2>
+            );
+          })}
+        {successMessage && (
+          <h2 style={{ color: "green" }}> {successMessage}</h2>
+        )}
 
         <div>
           {loginInputs &&
@@ -53,6 +62,11 @@ export default function LoginPage() {
                     value={userInfo[inp.name as keyof LoginInputType]}
                     onChange={(e) => {
                       handleChange(e, inp.name);
+                    }}
+                    style={{
+                      border: field?.includes(inp.name)
+                        ? "2px solid red"
+                        : "1px solid #ccc",
                     }}
                   />
                 </label>
