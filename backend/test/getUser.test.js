@@ -22,7 +22,7 @@ describe("Users API", () => {
     const res = await request(app).get("/api/users");
 
     expect(res.body).toHaveProperty("message");
-    expect(typeof res.body.message).toBe("string");
+    expect(typeof res.body.message).toBe("array");
   });
 
   test("Each user has correct properties", async () => {
