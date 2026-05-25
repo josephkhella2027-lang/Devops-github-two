@@ -12,6 +12,13 @@ export interface RegisterInputType {
   password: string;
   rePassword: string;
 }
+export interface SaveInputType {
+  id?: number | string;
+  username: string;
+  email: string;
+  password: string;
+}
+
 export interface LoginInputType {
   username: string;
   password: string;

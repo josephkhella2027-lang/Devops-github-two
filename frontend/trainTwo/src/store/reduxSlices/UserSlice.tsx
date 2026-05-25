@@ -51,6 +51,33 @@ const userSlice = createSlice({
         (u) => String(u.id) !== String(action.payload),
       );
     },
+    setUpdateUser: (state, action: PayloadAction<Users>) => {
+      const userId = String(action.payload.id);
+
+      if (!userId) return;
+
+      const findUser = state.users.find((u) => String(u.id) === userId);
+
+      if (!findUser) return;
+
+      state.users = state.users.map((u) => {
+        if (String(u.id) === userId) {
+          const updatedUser = {
+            ...u,
+            username: action.payload.username,
+            email: action.payload.email,
+            password: action.payload.password,
+          };
+
+          // update localStorage user
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+
+          return updatedUser;
+        }
+
+        return u;
+      });
+    },
   },
 });
 export const {
@@ -59,5 +86,6 @@ export const {
   setLoginUser,
   setLogOut,
   setDeleteUser,
+  setUpdateUser,
 } = userSlice.actions;
 export default userSlice.reducer;
